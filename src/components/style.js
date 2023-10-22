@@ -104,7 +104,7 @@ function Style() {
                     <div className="space--card">
                         <Text fontWeight="bold" variant="headingMd" pb="10">Icon Size</Text>
                         <Grid>
-                            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 8, xl: 8 }} style={{ display: 'flex', alignItems: 'center' }}>
+                            <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 8, xl: 8 }} >
                                 <RangeSlider output value={size} onChange={(e) => setSize(e)} />
                             </Grid.Cell>
                             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 4, xl: 4 }}>
