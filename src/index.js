@@ -3,10 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { AppProvider } from '@shopify/polaris';
+import { Provider } from 'react-redux';
+import store from './store/store';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <AppProvider>
-         <App />
-    </AppProvider>
+    <Provider store={store}>
+        <AppProvider>
+            <App />
+        </AppProvider>
+    </Provider>
 );

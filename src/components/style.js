@@ -1,5 +1,8 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch } from 'react-redux';
 import { Card, Text, TextField, Button, RangeSlider, Divider, ButtonGroup, Grid, Checkbox, Select, ColorPicker, Popover } from "@shopify/polaris";
+import { updateIcon } from '../store/iconSlice';
+
 import './style.css';
 
 // Helper functions
@@ -38,22 +41,25 @@ const convertHSBtoRGB = (hue, saturation, brightness) => {
 };
 
 function Style() {
+    const dispatch = useDispatch();
     // State declarations and functions
-    const [size, setSize] = useState(30);
+    const [size, setSize] = useState(100);
     const [checked, setChecked] = useState(false);
-    const [selectedSubtitle, setSelectedSubtitle] = useState('bold');
+
     const [selectedtitle, setSelectedtitle] = useState('overline')
+    const [selectedSubtitle, setSelectedSubtitle] = useState('bold');
+
     const [colorPickerActive, setColorPickerActive] = useState(false);
     // Color Picker 
     const [backColor, setBackColor] = useState({ hue: 120, brightness: 1, saturation: 0.7 });
-    const [titleColor, setTitleColor] = useState({ hue: 120, brightness: 1, saturation: 0.7 });
-    const [iconColor, setIconColor] = useState({ hue: 120, brightness: 1, saturation: 0.7 });
-    const [subtitleColor, setSubtitleColor] = useState({ hue: 120, brightness: 1, saturation: 0.7 });
+    const [iconColor, setIconColor] = useState({ hue: 60, brightness: 0.9, saturation: 1 });
+    const [titleColor, setTitleColor] = useState({ hue: 0, brightness: 0, saturation: 0 });
+    const [subtitleColor, setSubtitleColor] = useState({ hue: 0, brightness: 0, saturation: 0 });
 
-    const [titleFont, setTitleFont] = useState(30);
-    const [titleSubFont, setTitleSubFont] = useState(25);
+    const [titleFont, setTitleFont] = useState(14);
+    const [titleSubFont, setTitleSubFont] = useState(12);
 
-    const [boldSize, setBoldSize] = useState(10);
+    const [blockSize, setBlockSize] = useState(10);
 
     const [goseUp, setGoseUp] = useState(5)
     const [goseDown, setGoseDown] = useState(10);
@@ -96,6 +102,22 @@ function Style() {
         { label: 'Subtitle Color', onChange: setSubtitleColor, color: subtitleColor },
     ];
 
+    useEffect(() => {
+        console.log('iconColor', iconColor)
+        dispatch(updateIcon({
+            width: size, height: size, fill: convertHSBtoRGB(iconColor.hue,
+                iconColor.saturation,
+                iconColor.brightness),
+            titleColor: convertHSBtoRGB(titleColor.hue, titleColor.saturation, titleColor.brightness),
+            subtitleColor: convertHSBtoRGB(subtitleColor.hue, subtitleColor.saturation, subtitleColor.brightness),
+            titleFont: titleFont,
+            titleSubFont: titleSubFont,
+            blockSize: blockSize,
+            selectedtitle: selectedtitle,
+            selectedSubtitle: selectedSubtitle
+        }));
+    }, [size, iconColor, titleColor, subtitleColor, titleFont, titleSubFont, blockSize, selectedtitle, selectedSubtitle])
+
     // JSX structure
     return (
         <>
@@ -125,7 +147,17 @@ function Style() {
                                             <Popover
                                                 active={colorPickerActive === i}
                                                 activator={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <Button onClick={() => toggleColorPicker(i)} style={{ width: '20px', height: '20px', backgroundColor: convertHSBtoRGB(clr.color.hue, clr.color.saturation, clr.color.brightness) }}></Button>
+                                                    <Button onClick={() => toggleColorPicker(i)}
+                                                        style={{
+                                                            width: '20px',
+                                                            height: '20px',
+                                                            backgroundColor: convertHSBtoRGB(
+                                                                clr.color.hue,
+                                                                clr.color.saturation,
+                                                                clr.color.brightness
+                                                            ),
+                                                            border: '1px solid #000', // Add a border to the blank box
+                                                        }}></Button>
                                                     <TextField value={convertHSBtoRGB(clr.color.hue, clr.color.saturation, clr.color.brightness)}></TextField>
                                                 </div>}
                                                 onClose={() => toggleColorPicker(false)}
@@ -198,10 +230,10 @@ function Style() {
                         <Text fontWeight="bold" variant="headingMd">Spacing</Text>
                         <Grid>
                             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 8, xl: 8 }} style={{ display: 'flex', alignItems: 'center' }}>
-                                <RangeSlider output value={boldSize} onChange={(e) => setBoldSize(e)} label="Block size" />
+                                <RangeSlider output value={blockSize} onChange={(e) => setBlockSize(e)} label="Block size" />
                             </Grid.Cell>
                             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 4, xl: 4 }}>
-                                <TextField type="number" value={boldSize} autoComplete="off" />
+                                <TextField type="number" value={blockSize} autoComplete="off" />
                             </Grid.Cell>
                         </Grid>
                         <Divider />
@@ -230,7 +262,7 @@ function Style() {
                                 />
                             </Grid.Cell>
                             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 8, xl: 8 }} style={{ display: 'flex', alignItems: 'center' }}>
-                                <RangeSlider output value={size} onChange={(e) => setSize(e)} label="Block size" />
+                                <RangeSlider output value={size} onChange={(e) => setSize(e)} label="Space in between Block size" />
                             </Grid.Cell>
                             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 4, xl: 4 }}>
                                 <TextField type="number" value={size} autoComplete="off" />
@@ -239,11 +271,8 @@ function Style() {
                     </div>
                 </Card>
                 <div style={{ marginTop: '20px' }}>
-
-                    <ButtonGroup >
-                        <Button primary>Save</Button>
-                        <Button>Delete</Button>
-                    </ButtonGroup>
+                    <Button size="large" variant="primary" tone="success">Save</Button>
+                    <Button size="large" tone="critical" >Delete</Button>
                 </div>
             </div >
         </>

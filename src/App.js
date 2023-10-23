@@ -3,6 +3,8 @@ import { Page, Tabs, Grid, Frame } from "@shopify/polaris";
 import Style from './components/style';
 import Icons from './components/icons';
 import Block from './components/block';
+import Preview from './components/preview';
+
 import '@shopify/polaris/build/esm/styles.css';
 
 const App = () => {
@@ -52,8 +54,7 @@ const App = () => {
               </Tabs>
             </Grid.Cell>
             <Grid.Cell columnSpan={{ xs: 6, sm: 3, md: 3, lg: 6, xl: 6 }}>
-              <div>
-              </div>
+              <Preview />
             </Grid.Cell>
           </Grid>
         </Page>
